@@ -16,6 +16,20 @@
         "caught"
       ],
       "sha256": "25c8991981c78e9bdb06fc8562bbfa93311dd1e52e6b14f372fab546b7ecd9e5"
+    },
+    {
+      "name": "peekaboo",
+      "title": "Peekaboo",
+      "description": "He hides behind his lift with his eyes shut, then drops it, pops his eyes wide open and says Peekaboo! Sometimes he does it twice.",
+      "author": "D5 skills",
+      "file": "skills/peekaboo.json",
+      "seconds": 9,
+      "moves": false,
+      "endings": [
+        "once",
+        "twice"
+      ],
+      "sha256": "85b912236316dd461a8f261b4be7c3cfad8a041842cea7384b864805dd2df139"
     }
   ]
 }

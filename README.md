@@ -11,6 +11,7 @@ sizes, length) before running anything, and runs the steps strictly one after an
 | skill | what it does | endings |
 |---|---|---|
 | `pacman` | An arcade jingle, then one eye becomes Pac-Man and eats the other eye's dots, waka by waka. | escape, chased, caught |
+| `peekaboo` | He hides behind his lift with his eyes shut, then drops it, pops his eyes wide open and says "Peekaboo!" | once, twice |
 
 - `index.json`: the catalogue a robot reads to see what's available (name, title, length, endings, SHA-256)
 - `skills/<name>.json`: the skills themselves

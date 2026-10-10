@@ -74,7 +74,7 @@ with silence before playing, because D5 fails to play them otherwise.
 | `{"sound": "name", "volume": 80}` | play a named sound (the last frame stays up meanwhile) | volume 0-100 |
 | `{"say": "text"}` | speak | 200 chars |
 | `{"wait": 1.0}` | pause | 0-10 s |
-| `{"head": 20}` / `{"lift": 0.5}` | head angle (-22 to 45°) / lift height (0-1) | |
+| `{"head": 20}` / `{"lift": 0.5}` | head angle (-22 to 45°) / lift height (0-1); add `"wait": false` to start the move and go straight on to the next step | |
 | `{"turn": 90}` | turn in place, + = left | ±360° |
 | `{"drive": 100, "speed": 80}` | drive straight, + = forward | ±200 mm, 10-150 mm/s |
 | `{"animation": "GreetAfterLongTime"}` | one of his own animations (trigger or anim name) | |
@@ -89,3 +89,6 @@ trick's length is counted using its longest branch.
 Whole trick: at most 400 steps (repeats count), 900 frames and about 90 seconds; files at most 2 MB.
 A trick with `turn`, `drive` or `animation` steps drives D5 off his charger first.
 Tip: to show a picture while a sound plays, put the `show` (with a long enough `hold`) just before the `sound`.
+To move while a picture or speech changes, give the move `"wait": false` and put the `show` or `say` right
+after it: e.g. `{"lift": 1.0, "wait": false}, {"show": {"ref": "closed"}, "hold": 4}` raises the lift as the
+eyes close (see `peekaboo.json`). Older engines ignore `"wait"` and just do the move first.

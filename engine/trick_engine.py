@@ -450,16 +450,20 @@ def prepare(data, render=True, prefer=""):
                 txt = _text(st["say"], LIMITS["say_chars"], f"{w}.say")
                 plan.ops.append(("say", txt, None))
                 plan.seconds += 1 + len(txt) * 0.09
-            elif "wait" in st:
+            elif "wait" in st and "head" not in st and "lift" not in st:  # a pause (on a move it means "don't wait")
                 s = _num(st["wait"], 0, LIMITS["wait"], f"{w}.wait")
                 plan.ops.append(("wait", s, None))
                 plan.seconds += s
-            elif "head" in st:
-                plan.ops.append(("head", _num(st["head"], -22, 45, f"{w}.head"), None))
-                plan.seconds += 0.8
-            elif "lift" in st:
-                plan.ops.append(("lift", _num(st["lift"], 0, 1, f"{w}.lift"), None))
-                plan.seconds += 0.8
+            elif "head" in st or "lift" in st:
+                # "wait": false starts the move and goes straight on to the next step, so a move
+                # can happen together with a frame or speech (e.g. lift up as the eyes close)
+                kind = "head" if "head" in st else "lift"
+                value = _num(st[kind], -22, 45, f"{w}.head") if kind == "head" else _num(st[kind], 0, 1, f"{w}.lift")
+                wait = st.get("wait", True)
+                if not isinstance(wait, bool):
+                    raise TrickError(f"{w}.wait: true or false")
+                plan.ops.append((kind, value, not wait))
+                plan.seconds += 0.8 if wait else 0
             elif "turn" in st:
                 plan.ops.append(("turn", _num(st["turn"], -LIMITS["turn_deg"], LIMITS["turn_deg"], f"{w}.turn"), None))
                 plan.seconds += 1 + abs(st["turn"]) / 90
@@ -557,10 +561,14 @@ def perform(robot, plan, play=None, speak=None):
                 speak(robot, value)  # his chosen voice
             except concurrent.futures.CancelledError:
                 return False
-        elif kind == "head":
-            return robot.behavior.set_head_angle(vu.degrees(value)) is not None
-        elif kind == "lift":
-            return robot.behavior.set_lift_height(value) is not None
+        elif kind in ("head", "lift"):
+            finish(kind)  # one move per motor at a time
+            move = (lambda **kw: robot.behavior.set_head_angle(vu.degrees(value), **kw)) if kind == "head" else \
+                (lambda **kw: robot.behavior.set_lift_height(value, **kw))
+            if extra:  # "wait": false: start it and carry on
+                moving[kind] = move(_return_future=True)
+                return True
+            return move() is not None
         elif kind == "turn":
             return robot.behavior.turn_in_place(vu.degrees(value)) is not None
         elif kind == "drive":
@@ -573,6 +581,17 @@ def perform(robot, plan, play=None, speak=None):
             hue, sat, _ = colorsys.rgb_to_hsv(*(c / 255 for c in value))
             return robot.behavior.set_eye_color(hue, sat) is not None
         return True
+
+    moving = {}  # motor -> future of a move started with "wait": false
+
+    def finish(kind=None):
+        for k in [kind] if kind else list(moving):
+            fut = moving.pop(k, None)
+            if fut is not None:
+                try:
+                    fut.result(timeout=5)
+                except Exception:
+                    pass
 
     for i, (kind, value, extra) in enumerate(plan.ops):
         # The robot's own higher-priority reactions can take control back mid-trick (seen once,
@@ -588,6 +607,7 @@ def perform(robot, plan, play=None, speak=None):
         robot.conn.request_control(behavior_control_level=ControlPriorityLevel.DEFAULT_PRIORITY, timeout=10)
         regained += 1
         run_op(kind, value, extra)
+    finish()  # let any move still going complete before handing the robot back
     return notes
 
 

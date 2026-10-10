@@ -1,0 +1,235 @@
+{
+  "format": "d5-trick",
+  "version": 1,
+  "name": "peekaboo",
+  "title": "Peekaboo",
+  "description": "He hides behind his lift with his eyes shut, then drops it, pops his eyes wide open and says Peekaboo! Sometimes he does it twice.",
+  "author": "D5 skills",
+  "palette": {
+    "eye": "#f0cd1e"
+  },
+  "frames": {
+    "open": [
+      {
+        "rect": [
+          31,
+          19,
+          77,
+          77
+        ],
+        "radius": 12,
+        "fill": "eye"
+      },
+      {
+        "rect": [
+          107,
+          19,
+          153,
+          77
+        ],
+        "radius": 12,
+        "fill": "eye"
+      }
+    ],
+    "closed": [
+      {
+        "rect": [
+          31,
+          52,
+          77,
+          58
+        ],
+        "radius": 3,
+        "fill": "eye"
+      },
+      {
+        "rect": [
+          107,
+          52,
+          153,
+          58
+        ],
+        "radius": 3,
+        "fill": "eye"
+      }
+    ],
+    "wide": [
+      {
+        "rect": [
+          26,
+          12,
+          82,
+          84
+        ],
+        "radius": 18,
+        "fill": "eye"
+      },
+      {
+        "rect": [
+          102,
+          12,
+          158,
+          84
+        ],
+        "radius": 18,
+        "fill": "eye"
+      }
+    ],
+    "happy": [
+      {
+        "line": [
+          32,
+          60,
+          54,
+          38
+        ],
+        "width": 8,
+        "fill": "eye"
+      },
+      {
+        "line": [
+          54,
+          38,
+          76,
+          60
+        ],
+        "width": 8,
+        "fill": "eye"
+      },
+      {
+        "line": [
+          108,
+          60,
+          130,
+          38
+        ],
+        "width": 8,
+        "fill": "eye"
+      },
+      {
+        "line": [
+          130,
+          38,
+          152,
+          60
+        ],
+        "width": 8,
+        "fill": "eye"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "show": {
+        "ref": "open"
+      },
+      "hold": 1.0
+    },
+    {
+      "wait": 0.4
+    },
+    {
+      "choose": [
+        {
+          "label": "once",
+          "weight": 3,
+          "steps": [
+            {
+              "lift": 1.0,
+              "wait": false
+            },
+            {
+              "show": {
+                "ref": "closed"
+              },
+              "hold": 4
+            },
+            {
+              "wait": 1.6
+            },
+            {
+              "lift": 0.0,
+              "wait": false
+            },
+            {
+              "show": {
+                "ref": "wide"
+              },
+              "hold": 4
+            },
+            {
+              "say": "Peekaboo!"
+            }
+          ]
+        },
+        {
+          "label": "twice",
+          "weight": 1,
+          "steps": [
+            {
+              "lift": 1.0,
+              "wait": false
+            },
+            {
+              "show": {
+                "ref": "closed"
+              },
+              "hold": 4
+            },
+            {
+              "wait": 1.4
+            },
+            {
+              "lift": 0.0,
+              "wait": false
+            },
+            {
+              "show": {
+                "ref": "wide"
+              },
+              "hold": 4
+            },
+            {
+              "say": "Peekaboo!"
+            },
+            {
+              "lift": 1.0,
+              "wait": false
+            },
+            {
+              "show": {
+                "ref": "closed"
+              },
+              "hold": 4
+            },
+            {
+              "wait": 1.0
+            },
+            {
+              "lift": 0.0,
+              "wait": false
+            },
+            {
+              "show": {
+                "ref": "wide"
+              },
+              "hold": 4
+            },
+            {
+              "say": "Peekaboo again!"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "show": {
+        "ref": "happy"
+      },
+      "hold": 2
+    },
+    {
+      "wait": 1.5
+    }
+  ]
+}
