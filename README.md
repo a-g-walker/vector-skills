@@ -15,14 +15,22 @@ sizes, length) before running anything, and runs the steps strictly one after an
 - `index.json`: the catalogue a robot reads to see what's available (name, title, length, endings, SHA-256)
 - `skills/<name>.json`: the skills themselves
 - `FORMAT.md`: the `d5-trick` format, version 1
+- `engine/trick_engine.py`: checks, previews and performs skills (Python; Pillow, plus the Vector SDK to perform)
+- `tools/`: `build_index.py` (rebuild the catalogue) and `check_skills.py` (what the pull-request check runs)
 - `sources/`: generators for skills that are easier to write as code (`python3 sources/make_pacman.py`)
 
 ## Using these on your Vector
 
-These were made for one wire-pod setup with a small MCP server ("D5"); its trick engine reads this
-format. To use a skill elsewhere you need something that plays it: render the frames to the
-184x96 face screen, synthesise the sounds, and run the steps in order (see `FORMAT.md`).
-Two things learned the hard way, for anyone building a player:
+With Python 3, Pillow and the Vector SDK (`pip install pillow wirepod_vector_sdk`, set up for your
+robot as the SDK describes):
+
+```bash
+python3 engine/trick_engine.py check skills/pacman.json --gif pacman.gif   # no robot needed
+python3 engine/trick_engine.py play skills/pacman.json --serial <your robot's serial>
+```
+
+The engine came from one wire-pod setup with an MCP server ("D5"), which installs skills from this
+repository by itself. Two things learned the hard way, for anyone building their own player:
 
 - Never stream audio while sending face-screen frames: doing both at once jammed the robot's SDK
   service until it was restarted. Show a frame, then play the sound; the frame stays up meanwhile.
@@ -31,9 +39,9 @@ Two things learned the hard way, for anyone building a player:
 
 ## Adding a skill
 
-1. Write `skills/<name>.json` following `FORMAT.md` (the `name` field must match the file name).
-2. Check it on the robot's Pi, then regenerate `index.json`.
-3. Commit. Robots pick it up next time they browse.
+Contributions are welcome: see `CONTRIBUTING.md`. In short: write `skills/<name>.json`, check it with
+`python3 engine/trick_engine.py check`, rebuild `index.json`, and open a pull request. An automatic
+check validates it and attaches preview animations, and every skill is reviewed before it's merged.
 
 ## Notes
 

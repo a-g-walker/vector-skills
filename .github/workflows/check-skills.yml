@@ -1,0 +1,47 @@
+name: Check skills
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Pillow and the DejaVu font
+        run: |
+          pip install "pillow>=10.1"
+          sudo apt-get install -y fonts-dejavu-core
+
+      - name: Flag changes outside skills/ for careful review
+        if: github.event_name == 'pull_request'
+        run: |
+          changed=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+          echo "Changed files:"; echo "$changed"
+          others=$(echo "$changed" | grep -v -E '^(skills/[^/]+\.json|index\.json)$' || true)
+          if [ -n "$others" ]; then
+            echo "::warning::This pull request changes more than skills: $(echo $others | tr '\n' ' '). Code and checks need a careful human review before merging."
+          fi
+
+      - name: Check every skill and the catalogue
+        run: python tools/check_skills.py --previews previews
+
+      - name: Upload preview animations
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: skill-previews
+          path: previews/
+          if-no-files-found: ignore
