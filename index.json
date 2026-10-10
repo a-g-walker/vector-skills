@@ -1,0 +1,21 @@
+{
+  "format": "d5-skills-index",
+  "version": 1,
+  "skills": [
+    {
+      "name": "pacman",
+      "title": "Pac-Man",
+      "description": "An arcade jingle, then one eye becomes Pac-Man and eats the other eye's dots, waka by waka. Usually he chomps off the screen; sometimes a ghost chases him off, and sometimes it catches him.",
+      "author": "D5 skills",
+      "file": "skills/pacman.json",
+      "seconds": 14,
+      "moves": false,
+      "endings": [
+        "escape",
+        "chased",
+        "caught"
+      ],
+      "sha256": "25c8991981c78e9bdb06fc8562bbfa93311dd1e52e6b14f372fab546b7ecd9e5"
+    }
+  ]
+}
